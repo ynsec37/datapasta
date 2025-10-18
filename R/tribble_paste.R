@@ -164,8 +164,31 @@ tribble_construct <- function(input_table, oc = console_context()){
   }
 
   # Footer
-  footer <- paste0(strrep(" ",oc$indent_context+oc$nspc),")\n")
-  output <- paste0(header, names_row, body_rows, footer)
+  # footer <- paste0(strrep(" ",oc$indent_context+oc$nspc),")\n")
+  # output <- paste0(header, names_row, body_rows, footer)
+
+  # Left-align the first column of the data table to styler format.
+  footer <- ")\n"
+  new <- paste0(names_row, body_rows) |>
+    stringr::str_remove("\n$") |>
+    stringr::str_split_1("\n") |>
+    purrr::map_chr(
+      \(x){
+        loc <- stringr::str_locate(x, ",")[1]
+        part1 <- paste0("  ",
+                        stringr::str_pad(trimws(stringr::str_sub(x, 1, loc)),
+                                         col_widths[[1]] + 1, "right"))
+
+        part2 <- stringr::str_sub(x, loc + 1)
+
+        new <- paste0(part1, " ", part2)
+        new
+      }
+    ) |>
+    stringr::str_c(collapse = "\n") |>
+    stringr::str_c("\n")
+
+  output <- paste0(header, new, footer)
 
   return(output)
 }

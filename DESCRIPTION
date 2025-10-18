@@ -28,7 +28,8 @@ Imports:
     readr (>= 1.2.0),
     clipr (>= 0.3.0),
     rstudioapi (>= 0.6),
-    methods
+    methods,
+    stringr
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
