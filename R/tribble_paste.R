@@ -61,9 +61,17 @@ tribble_construct <- function(input_table, oc = console_context()){
       message(paste0("Supplied large input_table (>= ",.global_datapasta_env$max_rows," rows). Was this a mistake? Use dp_set_max_rows(n) to increase the limit."))
       return(NULL)
     }
+
+    # Get name of input_table
+
+    input_table_name <- deparse1(eval.parent(substitute(substitute(input_table))))
+
     input_table_types <- lapply(input_table, class)
     #Store types as characters so the char lengths can be computed
     input_table <- as.data.frame(lapply(input_table, as.character), stringsAsFactors = FALSE, check.names = FALSE)
+
+
+
   }
   # Warn if there is any factors, they will be converted to strings.
   factor_cols <- which(input_table_types == "factor")
@@ -168,6 +176,12 @@ tribble_construct <- function(input_table, oc = console_context()){
   # output <- paste0(header, names_row, body_rows, footer)
 
   # Left-align the first column of the data table to styler format.
+  if (exists("input_table_name", envir = environment(), inherits = FALSE)) {
+    if (is.character(input_table_name) & length(input_table_name)) {
+      header <- paste0(input_table_name, " <- tibble::tribble(\n")
+    }
+  }
+
   footer <- ")\n"
   new <- paste0(names_row, body_rows) |>
     stringr::str_remove("\n$") |>
